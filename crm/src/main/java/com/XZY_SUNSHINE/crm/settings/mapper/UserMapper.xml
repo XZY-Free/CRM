@@ -30,6 +30,11 @@
     id, login_act, name, login_pwd, email, expire_time, lock_state, deptno, allow_ips, 
     createTime, create_by, edit_time, edit_by
   </sql>
+  <select id="selectUserByLoginActAndPwd" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from crm.tbl_user
+    where login_act=#{loginAct} and login_pwd=#{loginPwd}
+  </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     <!--
       WARNING - @mbggenerated

@@ -1,4 +1,7 @@
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%--<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>--%>
+<%--&lt;%&ndash;<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>&ndash;%&gt;--%>
 <%
 	String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
 %>
@@ -10,6 +13,46 @@
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 </head>
+<script type="text/javascript">
+	$(function () {
+		console.log($("#isRem").prop("checked"));
+		$("#login_button").click(function () {
+			var loginAct=$.trim($("#loginAct").val());
+			var loginPwd=$.trim($("#loginPwd").val());
+			var isRem=$("#isRem").prop("checked");
+			console.log(isRem);
+			$.ajax({
+				url:"settings/qx/user/login.do",
+				type:'post',
+				data:{
+					loginAct:loginAct,
+					loginPwd:loginPwd,
+					isRem:isRem
+				},
+				dataType:'json',
+				success:function(data){
+					if (data.code=="200"){
+						window.location.href = "workbench/index";
+					}else{
+						$("#msg").text(data.message);
+					}
+				},
+				beforeSend:function () {
+					if (loginAct==""){
+						$("#msg").text("用户名不能为空！");
+						return false;
+					}
+					if (loginPwd==""){
+						$("#msg").text("密码不能为空！");
+						return  false;
+					}
+					$("#msg").text("正在验证。。。")
+					return true;
+				}
+			})
+		});
+	})
+</script>
 <body>
 	<div style="position: absolute; top: 0px; left: 0px; width: 60%;">
 		<img src="image/IMG_7114.JPG" style="width: 100%; height: 90%; position: relative; top: 50px;">
@@ -23,22 +66,34 @@
 			<div class="page-header">
 				<h1>登录</h1>
 			</div>
-			<form action="workbench/index.html" class="form-horizontal" role="form">
+			<form class="form-horizontal" role="form">
 				<div class="form-group form-group-lg">
 					<div style="width: 350px;">
-						<input class="form-control" type="text" placeholder="用户名">
+						<input id="loginAct" class="form-control" value="${cookie.loginAct.value}" type="text" placeholder="用户名">
 					</div>
 					<div style="width: 350px; position: relative;top: 20px;">
-						<input class="form-control" type="password" placeholder="密码">
+						<input id="loginPwd" class="form-control" value="${cookie.loginPwd.value}" type="password" placeholder="密码">
 					</div>
 					<div class="checkbox"  style="position: relative;top: 30px; left: 10px;">
+
 						<label>
-							<input type="checkbox"> 十天内免登录
+<%--						<c:if test="${not empty cookie.loginAct and not empty cookie.loginPwd}">--%>
+<%--							<input  id="isRem" type="checkbox" checked="true">--%>
+<%--						</c:if>--%>
+<%--						<c:if test="${empty cookie.loginAct or empty cookie.loginPwd}">--%>
+<%--								<input  id="isRem" type="checkbox" checked="false">--%>
+<%--						</c:if>--%>
+							<input  id="isRem" type="checkbox" checked="true">
+
+							十天内免登录
 						</label>
+<%--						<label>--%>
+<%--							<input  id="isRem" type="checkbox"> 十天内免登录--%>
+<%--						</label>--%>
 						&nbsp;&nbsp;
 						<span id="msg"></span>
 					</div>
-					<button type="submit" class="btn btn-primary btn-lg btn-block"  style="width: 350px; position: relative;top: 45px;">登录</button>
+					<button id="login_button" type="button" class="btn btn-primary btn-lg btn-block"  style="width: 350px; position: relative;top: 45px;">登录</button>
 				</div>
 			</form>
 		</div>
