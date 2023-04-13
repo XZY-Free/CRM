@@ -75,4 +75,18 @@ public class UserController {
         }
         return result;
     }
+
+
+    //实现安全退出功能
+    @GetMapping("/settings/qx/user/logout.do")
+    public String logout(HttpServletResponse response,HttpSession session){
+        Cookie cookie1 = new Cookie("loginAct", "1");
+        Cookie cookie2 = new Cookie("loginPwd", "1");
+        cookie1.setMaxAge(0);
+        cookie2.setMaxAge(0);
+        response.addCookie(cookie1);
+        response.addCookie(cookie2);
+        session.invalidate();
+        return "redirect:/";
+    }
 }

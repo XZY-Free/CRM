@@ -13,7 +13,9 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 
 	//页面加载完毕
 	$(function(){
-		
+		$("#logout_button").click(function () {
+			window.location.href="settings/qx/user/logout.do";
+		})
 		//导航中所有文本颜色为黑色
 		$(".liClass > a").css("color" , "black");
 		
@@ -129,7 +131,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="window.location.href='login.html';">确定</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" id="logout_button">确定</button>
 				</div>
 			</div>
 		</div>
