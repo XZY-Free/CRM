@@ -1,7 +1,6 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%--<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>--%>
-<%--&lt;%&ndash;<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>&ndash;%&gt;--%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
 	String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
 %>
@@ -75,22 +74,13 @@
 						<input id="loginPwd" class="form-control" value="${cookie.loginPwd.value}" type="password" placeholder="密码">
 					</div>
 					<div class="checkbox"  style="position: relative;top: 30px; left: 10px;">
-
-						<label>
-<%--						<c:if test="${not empty cookie.loginAct and not empty cookie.loginPwd}">--%>
-<%--							<input  id="isRem" type="checkbox" checked="true">--%>
-<%--						</c:if>--%>
-<%--						<c:if test="${empty cookie.loginAct or empty cookie.loginPwd}">--%>
-<%--								<input  id="isRem" type="checkbox" checked="false">--%>
-<%--						</c:if>--%>
-							<input  id="isRem" type="checkbox" checked="true">
-
-							十天内免登录
-						</label>
-<%--						<label>--%>
-<%--							<input  id="isRem" type="checkbox"> 十天内免登录--%>
-<%--						</label>--%>
-						&nbsp;&nbsp;
+						<c:if test="${not empty cookie.loginAct and not empty cookie.loginPwd}">
+							<input type="checkbox" id="isRem" checked> 十天内免登录
+						</c:if>
+						<c:if test="${empty cookie.loginAct or empty cookie.loginPwd}">
+							<input type="checkbox" id="isRem"> 十天内免登录
+						</c:if>
+<%--						<input type="checkbox" id="isRem" checked> 十天内免登录--%>
 						<span id="msg"></span>
 					</div>
 					<button id="login_button" type="button" class="btn btn-primary btn-lg btn-block"  style="width: 350px; position: relative;top: 45px;">登录</button>
