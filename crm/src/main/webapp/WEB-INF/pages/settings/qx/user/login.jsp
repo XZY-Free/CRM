@@ -14,7 +14,11 @@
 </head>
 <script type="text/javascript">
 	$(function () {
-		console.log($("#isRem").prop("checked"));
+		$(window).keydown(function (event) {
+			if (event.keyCode==13){
+				$("#login_button").click();
+			}
+		})
 		$("#login_button").click(function () {
 			var loginAct=$.trim($("#loginAct").val());
 			var loginPwd=$.trim($("#loginPwd").val());
