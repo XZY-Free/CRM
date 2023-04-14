@@ -7,9 +7,9 @@
         <setting name="logImpl" value="STDOUT_LOGGING"/>
     </settings>
     <typeAliases>
-        <package name="com.XZY_SUNSHINE.crm.settings.pojo"/>
+        <package name="com.XZY_SUNSHINE.crm.pojo"/>
     </typeAliases>
     <mappers>
-            <package name="com.XZY_SUNSHINE.crm.settings.mapper"/>
+        <package name="com.XZY_SUNSHINE.crm.mapper"/>
     </mappers>
 </configuration>

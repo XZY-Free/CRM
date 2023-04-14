@@ -7,4 +7,7 @@ public class DateFormat {
     public static String dateFormatTime(Date date){
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
     }
+    public static String dateFormatDate(Date date){
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
+    }
 }

@@ -23,7 +23,6 @@
 			var loginAct=$.trim($("#loginAct").val());
 			var loginPwd=$.trim($("#loginPwd").val());
 			var isRem=$("#isRem").prop("checked");
-			console.log(isRem);
 			$.ajax({
 				url:"settings/qx/user/login.do",
 				type:'post',
