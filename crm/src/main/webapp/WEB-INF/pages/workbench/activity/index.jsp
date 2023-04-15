@@ -10,22 +10,25 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 
 <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
 <link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
-
+<link href="jquery/bs_pagination-master/css/jquery.bs_pagination.min.css">
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="jquery/bs_pagination-master/js/jquery.bs_pagination.min.js"></script>
+<script type="text/javascript" src="jquery/bs_pagination-master/localization/en.min.js"></script>
 
 <script type="text/javascript">
 
 	$(function(){
-		$(".createTimeInput").datetimepicker({
+		$(".TimeInput").datetimepicker({
 			language:"zh-CN",
 			format:"yyyy-mm-dd",
 			autoclose:true,
 			minView:"month",
 			todayBtn:true,
-			initialDate:new Date()
+			initialDate:new Date(),
+			clearBtn:true
 		});
 		$("#create_btn").click(function (){
 			$("#createActivityForm").get(0).reset();
@@ -55,7 +58,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					// *创建失败,提示信息创建失败,模态窗口不关闭,市场活动列表也不刷新
 					if (data.code=="200"){
 						$("#createActivityModal").modal("hide");
-						window.location.href="workbench/activity/index.do";
+						queryActivityByConditionForPage(1,5);
 						alert(data.message);
 					}else{
 						alert(data.message);
@@ -88,10 +91,70 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					return  true;
 				}
 			})
-		})
-		
-		
+		});
+		//当市场活动主页面加载完成，查询所有数据的第一页集街所有数据的总条数
+		queryActivityByConditionForPage(1, 5);
+		//给查询按钮添加单击事件
+		$("#query_btn").click(function () {
+			//查询所有符合条件的数据
+			queryActivityByConditionForPage(1, 5);
+		});
 	});
+	function queryActivityByConditionForPage(pageNo,pageSize) {
+		var query_name=$("#query_name").val();
+		var query_owner=$("#query_owner").val();
+		var query_startDate=$("#query_startDate").val();
+		var query_endDate=$("#query_endDate").val();
+		$.ajax({
+			url:"workbench/activity/selectByConditionForPage.do",
+			data:{
+				name:query_name,
+				owner:query_owner,
+				startDate:query_startDate,
+				endDate:query_endDate,
+				pageNo:pageNo,
+				pageSize:pageSize
+			},
+			type:'post',
+			dataType:'json',
+			success:function (data) {
+				var html="";
+				$.each(data.activityList,function (index,obj) {
+					html+="<tr class=\"active\">"+
+							"<td><input type=\"checkbox\" /></td>"+
+							"<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='detail.html';\">"+obj.name+"</a></td>"+
+							"<td>"+obj.owner+"</td>"+
+							"<td>"+obj.startDate+"</td>"+
+							"<td>"+obj.endDate+"</td>"+
+							"</tr>;"
+				})
+				$("#query_tbody").html(html);
+
+				if (data.totalCounts%pageSize==0){
+					var totalPages=data.totalCounts/pageSize;
+				}else{
+					var totalPages=parseInt(data.totalCounts/pageSize)+1;
+				}
+				$("#query_page").bs_pagination({
+					currentPage:pageNo,
+					rowsPerPage: pageSize,
+					maxRowsPerPage: 100,
+					totalPages:totalPages,
+					totalRows: data.totalCounts,
+
+					visiblePageLinks: 5,
+
+					showGoToPage: true,
+					showRowsPerPage: true,
+					showRowsInfo: false,
+					onChangePage:function(event,pageObj) {
+						queryActivityByConditionForPage(pageObj.currentPage,
+								pageObj.rowsPerPage)
+					}
+				})
+			}
+		})
+	}
 	
 </script>
 </head>
@@ -129,11 +192,11 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 						<div class="form-group">
 							<label  for="create-startTime" class="col-sm-2 control-label">开始日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control createTimeInput" id="create-startTime" readonly>
+								<input type="text" class="form-control TimeInput" id="create-startTime" readonly>
 							</div>
 							<label for="create-endTime" class="col-sm-2 control-label">结束日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control createTimeInput" id="create-endTime" readonly>
+								<input type="text" class="form-control TimeInput" id="create-endTime" readonly>
 							</div>
 						</div>
                         <div class="form-group">
@@ -281,14 +344,14 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">名称</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="query_name">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">所有者</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="query_owner">
 				    </div>
 				  </div>
 
@@ -296,17 +359,17 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">开始日期</div>
-					  <input class="form-control" type="text" id="startTime" />
+					  <input class="form-control TimeInput" type="text" id="query_startDate" readonly/>
 				    </div>
 				  </div>
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">结束日期</div>
-					  <input class="form-control" type="text" id="endTime">
+					  <input class="form-control TimeInput" type="text" id="query_endDate" readonly/>
 				    </div>
 				  </div>
 				  
-				  <button type="submit" class="btn btn-default">查询</button>
+				  <button type="button" class="btn btn-default" id="query_btn">查询</button>
 				  
 				</form>
 			</div>
@@ -333,59 +396,60 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 							<td>结束日期</td>
 						</tr>
 					</thead>
-					<tbody>
-						<tr class="active">
-							<td><input type="checkbox" /></td>
-							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">发传单</a></td>
-                            <td>zhangsan</td>
-							<td>2020-10-10</td>
-							<td>2020-10-20</td>
-						</tr>
-                        <tr class="active">
-                            <td><input type="checkbox" /></td>
-                            <td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">发传单</a></td>
-                            <td>zhangsan</td>
-                            <td>2020-10-10</td>
-                            <td>2020-10-20</td>
-                        </tr>
+					<tbody id="query_tbody">
+<%--						<tr class="active">--%>
+<%--							<td><input type="checkbox" /></td>--%>
+<%--							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">发传单</a></td>--%>
+<%--                            <td>zhangsan</td>--%>
+<%--							<td>2020-10-10</td>--%>
+<%--							<td>2020-10-20</td>--%>
+<%--						</tr>--%>
+<%--                        <tr class="active">--%>
+<%--                            <td><input type="checkbox" /></td>--%>
+<%--                            <td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">发传单</a></td>--%>
+<%--                            <td>zhangsan</td>--%>
+<%--                            <td>2020-10-10</td>--%>
+<%--                            <td>2020-10-20</td>--%>
+<%--                        </tr>--%>
 					</tbody>
 				</table>
+				<div id="query_page"></div>
 			</div>
 			
-			<div style="height: 50px; position: relative;top: 30px;">
-				<div>
-					<button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
-				</div>
-				<div class="btn-group" style="position: relative;top: -34px; left: 110px;">
-					<button type="button" class="btn btn-default" style="cursor: default;">显示</button>
-					<div class="btn-group">
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-							10
-							<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" role="menu">
-							<li><a href="#">20</a></li>
-							<li><a href="#">30</a></li>
-						</ul>
-					</div>
-					<button type="button" class="btn btn-default" style="cursor: default;">条/页</button>
-				</div>
-				<div style="position: relative;top: -88px; left: 285px;">
-					<nav>
-						<ul class="pagination">
-							<li class="disabled"><a href="#">首页</a></li>
-							<li class="disabled"><a href="#">上一页</a></li>
-							<li class="active"><a href="#">1</a></li>
-							<li><a href="#">2</a></li>
-							<li><a href="#">3</a></li>
-							<li><a href="#">4</a></li>
-							<li><a href="#">5</a></li>
-							<li><a href="#">下一页</a></li>
-							<li class="disabled"><a href="#">末页</a></li>
-						</ul>
-					</nav>
-				</div>
-			</div>
+<%--			<div style="height: 50px; position: relative;top: 30px;">--%>
+<%--				<div>--%>
+<%--					<button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>--%>
+<%--				</div>--%>
+<%--				<div class="btn-group" style="position: relative;top: -34px; left: 110px;">--%>
+<%--					<button type="button" class="btn btn-default" style="cursor: default;">显示</button>--%>
+<%--					<div class="btn-group">--%>
+<%--						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">--%>
+<%--							10--%>
+<%--							<span class="caret"></span>--%>
+<%--						</button>--%>
+<%--						<ul class="dropdown-menu" role="menu">--%>
+<%--							<li><a href="#">20</a></li>--%>
+<%--							<li><a href="#">30</a></li>--%>
+<%--						</ul>--%>
+<%--					</div>--%>
+<%--					<button type="button" class="btn btn-default" style="cursor: default;">条/页</button>--%>
+<%--				</div>--%>
+<%--				<div style="position: relative;top: -88px; left: 285px;">--%>
+<%--					<nav>--%>
+<%--						<ul class="pagination">--%>
+<%--							<li class="disabled"><a href="#">首页</a></li>--%>
+<%--							<li class="disabled"><a href="#">上一页</a></li>--%>
+<%--							<li class="active"><a href="#">1</a></li>--%>
+<%--							<li><a href="#">2</a></li>--%>
+<%--							<li><a href="#">3</a></li>--%>
+<%--							<li><a href="#">4</a></li>--%>
+<%--							<li><a href="#">5</a></li>--%>
+<%--							<li><a href="#">下一页</a></li>--%>
+<%--							<li class="disabled"><a href="#">末页</a></li>--%>
+<%--						</ul>--%>
+<%--					</nav>--%>
+<%--				</div>--%>
+<%--			</div>--%>
 			
 		</div>
 		
