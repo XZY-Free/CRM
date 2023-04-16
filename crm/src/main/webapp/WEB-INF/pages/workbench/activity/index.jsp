@@ -152,6 +152,15 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 								pageObj.rowsPerPage)
 					}
 				})
+			},
+			beforeSend:function () {
+				if (query_startDate!=null && query_endDate!=null){
+					if (query_startDate>query_endDate){
+						alert("日期填写不规范！");
+						return false;
+					}
+				}
+				return true;
 			}
 		})
 	}
