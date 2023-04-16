@@ -58,7 +58,8 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					// *创建失败,提示信息创建失败,模态窗口不关闭,市场活动列表也不刷新
 					if (data.code=="200"){
 						$("#createActivityModal").modal("hide");
-						queryActivityByConditionForPage(1,5);
+						queryActivityByConditionForPage(1,$("#query_page").bs_pagination("getOption","rowsPerPage")
+						);
 						alert(data.message);
 					}else{
 						alert(data.message);
@@ -97,7 +98,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 		//给查询按钮添加单击事件
 		$("#query_btn").click(function () {
 			//查询所有符合条件的数据
-			queryActivityByConditionForPage(1, 5);
+			queryActivityByConditionForPage(1,$("#query_page").bs_pagination("getOption","rowsPerPage"));
 		});
 	});
 	function queryActivityByConditionForPage(pageNo,pageSize) {
