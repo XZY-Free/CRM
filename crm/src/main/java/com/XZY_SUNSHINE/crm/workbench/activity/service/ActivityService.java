@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ActivityService {
+    int deleteActivityByIds(String[] ids);
     int insert(Activity record);
     List<Activity> queryActivityByConditionForPage(Map map);
     int queryActivityByConditionForCounts(Map map);

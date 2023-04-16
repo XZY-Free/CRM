@@ -100,6 +100,44 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			//查询所有符合条件的数据
 			queryActivityByConditionForPage(1,$("#query_page").bs_pagination("getOption","rowsPerPage"));
 		});
+		$("#selectAll_box").click(function () {
+			$("#query_tbody input[type='checkbox']").prop("checked",this.checked)
+		})
+
+		$("#query_tbody").on("click","input[type='checkbox']",function () {
+			if ($("#query_tbody input[type='checkbox']").size()==$("#query_tbody input[type='checkbox']:checked").size()){
+				$("#selectAll_box").prop("checked",true);
+			}else{
+				$("#selectAll_box").prop("checked",false);
+			}
+		})
+		$("#delete_btn").click(function () {
+			if ($("#query_tbody input[type='checkbox']:checked").size()==0){
+				alert("请选择要删除的记录！");
+				return;
+			}
+			if (window.confirm("确认要删除？")){
+				var ids='ids=';
+				$.each($("#query_tbody input[type='checkbox']:checked"),function (index, obj) {
+					ids+=obj.value+"&";
+				})
+				ids=ids.substring(0,ids.length-1);
+				$.ajax({
+					url:"workbench/activity/deleteByIds.do",
+					data:ids,
+					type:"post",
+					dataType:'json',
+					success:function (data) {
+						if (data.code=="200"){
+							alert("删除成功！");
+							queryActivityByConditionForPage(1,$("#query_page").bs_pagination("getOption","rowsPerPage"));
+						}else{
+							alert("删除失败！")
+						}
+					}
+				})
+			}
+		})
 	});
 	function queryActivityByConditionForPage(pageNo,pageSize) {
 		var query_name=$("#query_name").val();
@@ -122,7 +160,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				var html="";
 				$.each(data.activityList,function (index,obj) {
 					html+="<tr class=\"active\">"+
-							"<td><input type=\"checkbox\" /></td>"+
+							"<td><input type=\"checkbox\" value=\""+obj.id+"\"/></td>"+
 							"<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='detail.html';\">"+obj.name+"</a></td>"+
 							"<td>"+obj.owner+"</td>"+
 							"<td>"+obj.startDate+"</td>"+
@@ -387,7 +425,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" id="create_btn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-danger" id="delete_btn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				<div class="btn-group" style="position: relative; top: 18%;">
                     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#importActivityModal" ><span class="glyphicon glyphicon-import"></span> 上传列表数据（导入）</button>
@@ -399,7 +437,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				<table class="table table-hover">
 					<thead>
 						<tr style="color: #B3B3B3;">
-							<td><input type="checkbox" /></td>
+							<td><input type="checkbox" id="selectAll_box"/></td>
 							<td>名称</td>
                             <td>所有者</td>
 							<td>开始日期</td>

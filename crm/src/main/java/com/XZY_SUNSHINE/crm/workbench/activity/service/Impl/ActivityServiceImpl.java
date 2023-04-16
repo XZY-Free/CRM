@@ -13,6 +13,12 @@ import java.util.Map;
 public class ActivityServiceImpl implements ActivityService {
     @Autowired
     private ActivityMapper activityMapper;
+
+    @Override
+    public int deleteActivityByIds(String[] ids) {
+        return activityMapper.deleteActivityByIds(ids);
+    }
+
     @Override
     public int insert(Activity record) {
         return activityMapper.insert(record);

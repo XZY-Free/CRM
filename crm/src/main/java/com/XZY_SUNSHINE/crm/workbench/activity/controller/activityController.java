@@ -75,4 +75,22 @@ public class activityController {
         return retMap;
     }
 
+    @PostMapping("/workbench/activity/deleteByIds.do")
+    @ResponseBody
+    public Object deleteByIds(String[] ids){
+        ResultObject resultObject = new ResultObject();
+        try{
+            int i = activityService.deleteActivityByIds(ids);
+            if (i>0){
+                resultObject.setCode(constants.SUCCESS_CODE);
+            }else{
+                resultObject.setCode(constants.FAIL_CODE);
+                resultObject.setMessage("系统忙，请稍后重试！");
+            }
+        }catch (Exception e){
+           e.printStackTrace();
+       }
+        return resultObject;
+    }
+
 }
