@@ -248,8 +248,6 @@
       end_date = #{endDate,jdbcType=CHAR},
       cost = #{cost,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=CHAR},
-      create_by = #{createBy,jdbcType=VARCHAR},
       edit_time = #{editTime,jdbcType=CHAR},
       edit_by = #{editBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=CHAR}

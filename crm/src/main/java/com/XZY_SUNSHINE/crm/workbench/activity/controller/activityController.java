@@ -93,4 +93,35 @@ public class activityController {
         return resultObject;
     }
 
+
+    @PostMapping("/workbench/activity/selectActivityById.do")
+    @ResponseBody
+    public Activity selectActivityById(String id){
+        Activity activity = activityService.queryActivityById(id);
+        return activity;
+    }
+
+    @PostMapping("/workbench/activity/updateActivityById.do")
+    @ResponseBody
+    public Object updateActivityById(Activity activity,HttpSession session){
+        ResultObject resultObject = new ResultObject();
+        User user = (User) session.getAttribute(constants.SESSION_USER);
+        activity.setEditBy(user.getId());
+        activity.setEditTime(DateFormat.dateFormatTime(new Date()));
+        try {
+            int i = activityService.updateActivityById(activity);
+            if (i>0){
+                resultObject.setCode(constants.SUCCESS_CODE);
+                resultObject.setMessage("修改成功！");
+            }else{
+                resultObject.setCode(constants.FAIL_CODE);
+                resultObject.setMessage("系统忙，请稍后重试！");
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return resultObject;
+    }
+
 }
