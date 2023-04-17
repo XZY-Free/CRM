@@ -1,10 +1,7 @@
 package com.XZY_SUNSHINE.crm.workbench.activity.controller;
 
 import com.XZY_SUNSHINE.crm.commons.pojo.ResultObject;
-import com.XZY_SUNSHINE.crm.commons.utils.DateFormat;
-import com.XZY_SUNSHINE.crm.commons.utils.constants;
-import com.XZY_SUNSHINE.crm.commons.utils.export;
-import com.XZY_SUNSHINE.crm.commons.utils.uuid;
+import com.XZY_SUNSHINE.crm.commons.utils.*;
 import com.XZY_SUNSHINE.crm.settings.pojo.User;
 import com.XZY_SUNSHINE.crm.settings.service.UserService;
 import com.XZY_SUNSHINE.crm.workbench.activity.pojo.Activity;
@@ -18,11 +15,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -133,7 +132,7 @@ public class activityController {
     @GetMapping("/workbench/activity/exportActivities.do")
     public void exportActivities(HttpServletResponse response) throws  Exception{
         List<Activity> activities = activityService.queryAllActivities();
-        export.exportActivities(activities,response);
+        HSSFUtils.exportActivities(activities,response);
     }
 
 
@@ -141,8 +140,54 @@ public class activityController {
     public void exportActivitiesByIds(String id,HttpServletResponse response) throws Exception{
         String[] ids = id.split(",");
         List<Activity> activities = activityService.queryAllActivitiesByIds(ids);
-        export.exportActivities(activities,response);
+        HSSFUtils.exportActivities(activities,response);
     }
+
+
+    @PostMapping("/workbench/activity/saveActivities.do")
+    @ResponseBody
+    public Object saveActivities(MultipartFile activityFile,HttpSession session) throws Exception{
+        User user = (User) session.getAttribute(constants.SESSION_USER);
+        HSSFWorkbook workbook = new HSSFWorkbook(activityFile.getInputStream());
+        HSSFSheet sheet = workbook.getSheetAt(0);
+        List<Activity> activities = new ArrayList<>();
+        HSSFRow row=null;
+        HSSFCell cell=null;
+        Activity activity =null;
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+            activity=new Activity();
+            activity.setId(uuid.getUUID());
+            activity.setOwner(user.getId());
+            activity.setCreateBy(user.getId());
+            activity.setCreateTime(DateFormat.dateFormatDate(new Date()));
+            row = sheet.getRow(i);
+            for (int j = 0; j < row.getLastCellNum(); j++) {
+                cell = row.getCell(j);
+                if (j == 0) {
+                    activity.setName(HSSFUtils.getValue(cell));
+                } else if (j==1) {
+                    activity.setStartDate(HSSFUtils.getValue(cell));
+                } else if (j==2) {
+                    activity.setEndDate(HSSFUtils.getValue(cell));
+                } else if (j==3) {
+                    activity.setCost(HSSFUtils.getValue(cell));
+                } else if (j == 4) {
+                    activity.setDescription(HSSFUtils.getValue(cell));
+                }
+            }
+            activities.add(activity);
+        }
+        int i = activityService.saveActivityByList(activities);
+        ResultObject resultObject = new ResultObject();
+        if (i>0){
+            resultObject.setCode(constants.SUCCESS_CODE);
+        }else{
+            resultObject.setCode(constants.FAIL_CODE);
+        }
+        return resultObject;
+
+    }
+
 
 
 }

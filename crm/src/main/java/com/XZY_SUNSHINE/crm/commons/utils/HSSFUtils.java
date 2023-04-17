@@ -7,11 +7,10 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
 
-public class export {
+public class HSSFUtils {
     public static void exportActivities(List<Activity> activities, HttpServletResponse response) throws Exception{
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("市场活动记录");
@@ -69,5 +68,22 @@ public class export {
         fileName = URLEncoder.encode(fileName,"UTF-8");
         response.addHeader("Content-Disposition","attachment; filename="+fileName);
         workbook.write(response.getOutputStream());
+    }
+
+    public static String getValue(HSSFCell cell){
+        String ret="";
+        if(cell.getCellType()==HSSFCell.CELL_TYPE_STRING){
+            ret=cell.getStringCellValue();
+        }else if(cell.getCellType()==HSSFCell.CELL_TYPE_NUMERIC){
+            ret=cell.getNumericCellValue()+"";
+        }else if(cell.getCellType()==HSSFCell.CELL_TYPE_BOOLEAN){
+            ret=cell.getBooleanCellValue()+"";
+        }else if(cell.getCellType()==HSSFCell.CELL_TYPE_FORMULA){
+            ret=cell.getCellFormula();
+        }else{
+            ret="";
+        }
+
+        return ret;
     }
 }

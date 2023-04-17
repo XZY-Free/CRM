@@ -241,6 +241,46 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			})
 			id=id.substring(0,id.length-1);
 			window.location.href="workbench/activity/exportActivitiesByIds.do?"+id;
+		});
+		$("#importActivityBtn").click(function () {
+			var file=$("#activityFile").val();
+			var suffix=file.substring(file.lastIndexOf(".")+1);
+			if (suffix!="xls"){
+				alert("目前仅支持xlsx后缀的文件！");
+				var _file = document.getElementById("activityFile");
+    			_file.outerHTML = _file.outerHTML;
+				return;
+			}
+			var activityFile = $("#activityFile")[0].files[0];
+			if (activityFile.size>1024*1024*5){
+				alert("上传文件大小超过上限！");
+				var _file = document.getElementById("activityFile");
+    			_file.outerHTML = _file.outerHTML;
+				return;
+			}
+			var formData = new FormData();
+			formData.append("activityFile",activityFile);
+			$.ajax({
+				url:"workbench/activity/saveActivities.do",
+				data:formData,
+				contentType:false,
+				processData:false,
+				type:'post',
+				dataType:'json',
+				success:function (data) {
+					if (data.code=="200"){
+						alert("导入成功！");
+						$("#importActivityModal").modal("hide");
+						var _file = document.getElementById("activityFile");
+    					_file.outerHTML = _file.outerHTML;
+						queryActivityByConditionForPage(1,$("#query_page").bs_pagination("getOption","rowsPerPage"));
+					}else{
+						alert("导入失败！");
+						var _file = document.getElementById("activityFile");
+    					_file.outerHTML = _file.outerHTML;
+					}
+				}
+			})
 		})
 
 	});

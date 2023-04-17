@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ActivityService {
+    int saveActivityByList(List<Activity> activities);
     List<Activity> queryAllActivitiesByIds(String[] ids);
     List<Activity> queryAllActivities();
     int updateActivityById(Activity activity);

@@ -8,6 +8,7 @@ import java.util.Map;
 
 @Mapper
 public interface ActivityMapper {
+    int insertActivityByList(List<Activity> activities);
     List<Activity> selectAllActivitiesByIds(String[] ids);
     List<Activity> selectAllActivities();
     int deleteActivityByIds(String[] ids);
