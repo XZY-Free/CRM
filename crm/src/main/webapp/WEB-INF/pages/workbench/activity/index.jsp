@@ -225,6 +225,9 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					return  true;
 				}
 			})
+		});
+		$("#exportActivityAllBtn").click(function () {
+			window.location.href="workbench/activity/exportActivities.do";
 		})
 
 	});
