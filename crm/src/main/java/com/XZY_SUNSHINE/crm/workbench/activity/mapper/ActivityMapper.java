@@ -8,6 +8,7 @@ import java.util.Map;
 
 @Mapper
 public interface ActivityMapper {
+    List<Activity> selectAllActivitiesByIds(String[] ids);
     List<Activity> selectAllActivities();
     int deleteActivityByIds(String[] ids);
     int selectActivityByConditionForCounts(Map map);

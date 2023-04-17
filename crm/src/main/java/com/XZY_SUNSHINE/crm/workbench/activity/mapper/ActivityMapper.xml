@@ -28,6 +28,18 @@
     id, owner, name, start_date, end_date, cost, description, create_time, create_by, 
     edit_time, edit_by
   </sql>
+  <select id="selectAllActivitiesByIds" parameterType="string" resultMap="BaseResultMap">
+    select a.id,u.name as owner,a.name,a.start_date,a.end_date,a.cost,a.description,a.create_time,s.name as create_by,
+           a.edit_time,e.name as edit_by
+    from tbl_activity a
+           join tbl_user u on u.id=a.owner
+           join tbl_user s on s.id=a.create_by
+           left join tbl_user e on e.id=a.edit_by
+    where a.id in
+    <foreach collection="array" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </select>
   <select id="selectAllActivities" resultMap="BaseResultMap">
     select a.id,u.name as owner,a.name,a.start_date,a.end_date,a.cost,a.description,a.create_time,s.name as create_by,
            a.edit_time,e.name as edit_by

@@ -229,6 +229,19 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 		$("#exportActivityAllBtn").click(function () {
 			window.location.href="workbench/activity/exportActivities.do";
 		})
+		$("#exportActivityXzBtn").click(function () {
+			var checkedObj=$("#query_tbody input[type='checkbox']:checked");
+			if (checkedObj.size()==0){
+				alert("请选择你要导出的记录!")
+				return;
+			}
+			var id="id=";
+			$.each(checkedObj,function (index, obj) {
+				id+=obj.value+",";
+			})
+			id=id.substring(0,id.length-1);
+			window.location.href="workbench/activity/exportActivitiesByIds.do?"+id;
+		})
 
 	});
 	function queryActivityByConditionForPage(pageNo,pageSize) {

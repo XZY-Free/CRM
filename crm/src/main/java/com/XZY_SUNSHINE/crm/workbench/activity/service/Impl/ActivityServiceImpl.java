@@ -15,6 +15,11 @@ public class ActivityServiceImpl implements ActivityService {
     private ActivityMapper activityMapper;
 
     @Override
+    public List<Activity> queryAllActivitiesByIds(String[] ids) {
+        return activityMapper.selectAllActivitiesByIds(ids);
+    }
+
+    @Override
     public List<Activity> queryAllActivities() {
         return activityMapper.selectAllActivities();
     }
