@@ -44,9 +44,29 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				}
 			})
 		});
-		$("#edit_remark").on('click',"a[id='editBtn']",function () {
+		$("#edit_remark").on('click',"a[id='deleteBtn']",function () {
 			var id=$(this).attr("remarkId");
-			$("#remarkId").prop("value",id);
+			var ActivityId=$("#activityId").val();
+			$.ajax({
+				url:'workbench/activityDetail/delete',
+				data:{
+					id:id
+				},
+				type:'post',
+				dataType:'json',
+				success:function (data) {
+					if (data.code=="200"){
+						alert("删除成功！");
+						window.location.href="workbench/activity/activityDetail.do?id="+ActivityId;
+					}else{
+						alert("系统忙请稍后重试!");
+					}
+				}
+
+			})
+		});
+		$("#edit_remark").on('click',"a[id='editBtn']",function () {
+			$("#remarkId").prop("value",$(this).attr("remarkId"));
 			$("#editRemarkModal").modal("show");
 		});
 		$("#updateRemarkBtn").click(function () {

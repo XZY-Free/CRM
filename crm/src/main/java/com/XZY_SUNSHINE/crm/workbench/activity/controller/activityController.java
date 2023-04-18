@@ -241,4 +241,21 @@ public class activityController {
         return resultObject;
     }
 
+    @PostMapping("/workbench/activityDetail/delete")
+    @ResponseBody
+    public Object deleteRemarkById(String id){
+        ResultObject resultObject = new ResultObject();
+        try{
+            int i = activityRemarkService.deleteRemarkById(id);
+            if (i>0){
+                resultObject.setCode(constants.SUCCESS_CODE);
+            }else{
+                resultObject.setCode(constants.FAIL_CODE);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return resultObject;
+    }
+
 }
