@@ -11,6 +11,12 @@ import java.util.List;
 public class ActivityRemarkServiceImpl implements ActivityRemarkService {
     @Autowired
     private ActivityRemarkMapper activityRemarkMapper;
+
+    @Override
+    public int insert(ActivityRemark activityRemark) {
+        return activityRemarkMapper.insert(activityRemark);
+    }
+
     @Override
     public List<ActivityRemark> queryActivityRemarkForDetailByActivityId(String id) {
         return activityRemarkMapper.selectActivityRemarkForDetailByActivityId(id);

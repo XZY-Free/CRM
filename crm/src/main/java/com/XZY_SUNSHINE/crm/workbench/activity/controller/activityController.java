@@ -199,6 +199,25 @@ public class activityController {
         return "/workbench/activity/detail";
     }
 
-
+    @PostMapping("/workbench/activityRemark/save")
+    @ResponseBody
+    public Object saveActivityRemark(ActivityRemark activityRemark,HttpSession session){
+        User user = (User) session.getAttribute(constants.SESSION_USER);
+        activityRemark.setCreateBy(user.getId());
+        activityRemark.setCreateTime(DateFormat.dateFormatTime(new Date()));
+        activityRemark.setId(uuid.getUUID());
+        ResultObject resultObject = new ResultObject();
+        try {
+            int i = activityRemarkService.insert(activityRemark);
+            if (i > 0) {
+                resultObject.setCode(constants.SUCCESS_CODE);
+            }else{
+                resultObject.setCode(constants.FAIL_CODE);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return resultObject;
+    }
 
 }

@@ -18,6 +18,34 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 	var cancelAndSaveBtnDefault = true;
 	
 	$(function(){
+		$("#saveBtn").click(function () {
+			var note_content=$.trim($("#remark").val());
+			if (note_content==""){
+				alert("请输入你要保存的备注！");
+				return;
+			}
+			var ActivityId=$("#activityId").val();
+			$.ajax({
+				url:'workbench/activityRemark/save',
+				data:{
+					ActivityId:ActivityId,
+					noteContent:note_content
+				},
+				type:'post',
+				dataType:'json',
+				success:function (data) {
+					if (data.code=="200"){
+						alert("保存成功！");
+						$("#remark").text("");
+						window.location.href="workbench/activity/activityDetail.do?id="+ActivityId;
+					}else{
+						alert("系统忙请稍后重试!");
+					}
+
+				}
+			})
+
+		})
 		$("#remark").focus(function(){
 			if(cancelAndSaveBtnDefault){
 				//设置remarkDiv的高度为130px
@@ -98,6 +126,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 	<!-- 大标题 -->
 	<div style="position: relative; left: 40px; top: -30px;">
 		<div class="page-header">
+			<input type="hidden" id="activityId" value="${requestScope.activity.id}">
 			<h3>${requestScope.activity.name}<small>${requestScope.activity.startDate} ~ ${requestScope.activity.endDate}</small></h3>
 		</div>
 		
@@ -172,27 +201,14 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				</div>
 			</div>
 		</c:forEach>
-		
-<%--		<!-- 备注2 -->--%>
-<%--		<div class="remarkDiv" style="height: 60px;">--%>
-<%--			<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">--%>
-<%--			<div style="position: relative; top: -40px; left: 40px;" >--%>
-<%--				<h5>呵呵！</h5>--%>
-<%--				<font color="gray">市场活动</font> <font color="gray">-</font> <b>发传单</b> <small style="color: gray;"> 2017-01-22 10:20:10 由zhangsan</small>--%>
-<%--				<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">--%>
-<%--					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>--%>
-<%--					&nbsp;&nbsp;&nbsp;&nbsp;--%>
-<%--					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>--%>
-<%--				</div>--%>
-<%--			</div>--%>
-<%--		</div>--%>
+
 		
 		<div id="remarkDiv" style="background-color: #E6E6E6; width: 870px; height: 90px;">
 			<form role="form" style="position: relative;top: 10px; left: 10px;">
 				<textarea id="remark" class="form-control" style="width: 850px; resize : none;" rows="2"  placeholder="添加备注..."></textarea>
 				<p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
 					<button id="cancelBtn" type="button" class="btn btn-default">取消</button>
-					<button type="button" class="btn btn-primary">保存</button>
+					<button id="saveBtn" type="button" class="btn btn-primary">保存</button>
 				</p>
 			</form>
 		</div>
