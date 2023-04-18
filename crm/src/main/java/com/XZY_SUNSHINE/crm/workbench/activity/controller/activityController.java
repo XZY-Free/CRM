@@ -220,4 +220,25 @@ public class activityController {
         return resultObject;
     }
 
+    @PostMapping("/workbench/ActivityDetail/update")
+    @ResponseBody
+    public Object UpdateActivityRemark(ActivityRemark activityRemark,HttpSession session){
+        User user = (User) session.getAttribute(constants.SESSION_USER);
+        activityRemark.setEditFlag("1");
+        activityRemark.setEditTime(DateFormat.dateFormatTime(new Date()));
+        activityRemark.setEditBy(user.getId());
+        ResultObject resultObject = new ResultObject();
+        try {
+            int i = activityRemarkService.updateByActivityRemarkId(activityRemark);
+            if (i>0){
+                resultObject.setCode(constants.SUCCESS_CODE);
+            }else{
+                resultObject.setCode(constants.FAIL_CODE);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return resultObject;
+    }
+
 }

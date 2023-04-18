@@ -13,6 +13,11 @@ public class ActivityRemarkServiceImpl implements ActivityRemarkService {
     private ActivityRemarkMapper activityRemarkMapper;
 
     @Override
+    public int updateByActivityRemarkId(ActivityRemark activityRemark) {
+        return activityRemarkMapper.updateByPrimaryKeySelective(activityRemark);
+    }
+
+    @Override
     public int insert(ActivityRemark activityRemark) {
         return activityRemarkMapper.insert(activityRemark);
     }

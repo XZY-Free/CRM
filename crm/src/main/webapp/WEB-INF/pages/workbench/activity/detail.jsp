@@ -41,10 +41,45 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					}else{
 						alert("系统忙请稍后重试!");
 					}
-
 				}
 			})
-
+		});
+		$("#edit_remark").on('click',"a[id='editBtn']",function () {
+			var id=$(this).attr("remarkId");
+			$("#remarkId").prop("value",id);
+			$("#editRemarkModal").modal("show");
+		});
+		$("#updateRemarkBtn").click(function () {
+			var id=$("#remarkId").val();
+			var noteContent=$.trim($("#noteContent").val());
+			var ActivityId=$("#activityId").val();
+			$.ajax({
+				url:'workbench/ActivityDetail/update',
+				data:{
+					activityId:ActivityId,
+					id:id,
+					noteContent:noteContent
+				},
+				type:'post',
+				dataType:'json',
+				success:function (data) {
+					if (data.code=="200"){
+						alert("保存成功！");
+						$("#noteContent").text("");
+						$("#editRemarkModal").modal("hide");
+						window.location.href="workbench/activity/activityDetail.do?id="+ActivityId;
+					}else{
+						alert("系统忙请稍后重试!");
+					}
+				},
+				beforeSend:function () {
+					if (noteContent==""){
+						alert("请输入要修改的备注内容！");
+						return false;
+					}
+					return true;
+				}
+			})
 		})
 		$("#remark").focus(function(){
 			if(cancelAndSaveBtnDefault){
@@ -193,10 +228,10 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				<div style="position: relative; top: -40px; left: 40px;" >
 					<h5>${activityRemark.noteContent}</h5>
 					<font color="gray">市场活动</font> <font color="gray">-</font> <b>${requestScope.activity.name}</b> <small style="color: gray;">${activityRemark.editFlag=='1'?activityRemark.editTime:activityRemark.createTime}由${activityRemark.editFlag=='1'?activityRemark.editBy:activityRemark.createBy}</small>
-					<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
-						<a  remarkId="${activityRemark.id}" class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;" ></span></a>
+					<div id="edit_remark" style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
+						<a  remarkId="${activityRemark.id}" class="myHref" id="editBtn"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;" ></span></a>
 						&nbsp;&nbsp;&nbsp;&nbsp;
-						<a remarkId="${activityRemark.id}" class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
+						<a remarkId="${activityRemark.id}" class="myHref" id="deleteBtn" ><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
 					</div>
 				</div>
 			</div>
