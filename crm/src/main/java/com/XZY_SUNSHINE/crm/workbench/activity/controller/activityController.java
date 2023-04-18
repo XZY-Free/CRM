@@ -5,6 +5,8 @@ import com.XZY_SUNSHINE.crm.commons.utils.*;
 import com.XZY_SUNSHINE.crm.settings.pojo.User;
 import com.XZY_SUNSHINE.crm.settings.service.UserService;
 import com.XZY_SUNSHINE.crm.workbench.activity.pojo.Activity;
+import com.XZY_SUNSHINE.crm.workbench.activity.pojo.ActivityRemark;
+import com.XZY_SUNSHINE.crm.workbench.activity.service.ActivityRemarkService;
 import com.XZY_SUNSHINE.crm.workbench.activity.service.ActivityService;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -32,12 +34,14 @@ public class activityController {
     private UserService userService;
     @Autowired
     private ActivityService activityService;
+    @Autowired
+    private ActivityRemarkService activityRemarkService;
 
     @GetMapping("/workbench/activity/index.do")
     public String activityIndex(HttpServletRequest request){
         List<User> userList = userService.queryAllUsers();
         request.setAttribute("userList",userList);
-        return "workbench/activity/index";
+        return "/workbench/activity/index";
     }
 
     @PostMapping("/workbench/activity/insert")
@@ -102,8 +106,7 @@ public class activityController {
     @PostMapping("/workbench/activity/selectActivityById.do")
     @ResponseBody
     public Activity selectActivityById(String id){
-        Activity activity = activityService.queryActivityById(id);
-        return activity;
+        return activityService.queryActivityById(id);
     }
 
     @PostMapping("/workbench/activity/updateActivityById.do")
@@ -146,16 +149,16 @@ public class activityController {
 
     @PostMapping("/workbench/activity/saveActivities.do")
     @ResponseBody
-    public Object saveActivities(MultipartFile activityFile,HttpSession session) throws Exception{
+    public Object saveActivities(MultipartFile activityFile,HttpSession session) throws Exception {
         User user = (User) session.getAttribute(constants.SESSION_USER);
         HSSFWorkbook workbook = new HSSFWorkbook(activityFile.getInputStream());
         HSSFSheet sheet = workbook.getSheetAt(0);
         List<Activity> activities = new ArrayList<>();
-        HSSFRow row=null;
-        HSSFCell cell=null;
-        Activity activity =null;
+        HSSFRow row = null;
+        HSSFCell cell = null;
+        Activity activity = null;
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
-            activity=new Activity();
+            activity = new Activity();
             activity.setId(uuid.getUUID());
             activity.setOwner(user.getId());
             activity.setCreateBy(user.getId());
@@ -165,11 +168,11 @@ public class activityController {
                 cell = row.getCell(j);
                 if (j == 0) {
                     activity.setName(HSSFUtils.getValue(cell));
-                } else if (j==1) {
+                } else if (j == 1) {
                     activity.setStartDate(HSSFUtils.getValue(cell));
-                } else if (j==2) {
+                } else if (j == 2) {
                     activity.setEndDate(HSSFUtils.getValue(cell));
-                } else if (j==3) {
+                } else if (j == 3) {
                     activity.setCost(HSSFUtils.getValue(cell));
                 } else if (j == 4) {
                     activity.setDescription(HSSFUtils.getValue(cell));
@@ -179,13 +182,21 @@ public class activityController {
         }
         int i = activityService.saveActivityByList(activities);
         ResultObject resultObject = new ResultObject();
-        if (i>0){
+        if (i > 0) {
             resultObject.setCode(constants.SUCCESS_CODE);
-        }else{
+        } else {
             resultObject.setCode(constants.FAIL_CODE);
         }
         return resultObject;
 
+    }
+    @GetMapping("/workbench/activity/activityDetail.do")
+    public String activityDetail(String id,HttpServletRequest request){
+        Activity activity = activityService.queryActivityById(id);
+        List<ActivityRemark> activityRemarks = activityRemarkService.queryActivityRemarkForDetailByActivityId(id);
+        request.setAttribute("activity",activity);
+        request.setAttribute("activityRemarks",activityRemarks);
+        return "/workbench/activity/detail";
     }
 
 
