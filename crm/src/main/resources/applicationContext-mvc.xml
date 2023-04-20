@@ -26,6 +26,7 @@ http://www.springframework.org/schema/util/spring-util.xsd">
     <context:component-scan base-package="com.XZY_SUNSHINE.crm.controller"/>
     <context:component-scan base-package="com.XZY_SUNSHINE.crm.settings.controller"/>
     <context:component-scan base-package="com.XZY_SUNSHINE.crm.workbench.activity.controller"/>
+    <context:component-scan base-package="com.XZY_SUNSHINE.crm.workbench.clue.controller"/>
     <context:component-scan base-package="com.XZY_SUNSHINE.crm.workbench"/>
     <!-- 配置注解驱动 -->
     <mvc:annotation-driven/>

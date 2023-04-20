@@ -58,8 +58,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					// *创建失败,提示信息创建失败,模态窗口不关闭,市场活动列表也不刷新
 					if (data.code=="200"){
 						$("#createActivityModal").modal("hide");
-						queryActivityByConditionForPage(1,$("#query_page").bs_pagination("getOption","rowsPerPage")
-						);
+						queryActivityByConditionForPage(1,$("#query_page").bs_pagination("getOption","rowsPerPage"));
 						alert(data.message);
 					}else{
 						alert(data.message);
