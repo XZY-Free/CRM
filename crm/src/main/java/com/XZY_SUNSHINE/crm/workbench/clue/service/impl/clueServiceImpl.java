@@ -15,6 +15,26 @@ public class clueServiceImpl implements clueService {
     private ClueMapper clueMapper;
 
     @Override
+    public Clue queryClueById(String id) {
+        return clueMapper.selectClueById(id);
+    }
+
+    @Override
+    public int deleteClueByIds(String[] ids) {
+        return clueMapper.deleteClueByIds(ids);
+    }
+
+    @Override
+    public int updateClue(Clue clue) {
+        return clueMapper.updateByPrimaryKey(clue);
+    }
+
+    @Override
+    public Clue queryByPrimaryKey(String id) {
+        return clueMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
     public int insertClue(Clue clue) {
         return clueMapper.insert(clue);
     }

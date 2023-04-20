@@ -24,6 +24,13 @@
     -->
     id, note_content, create_by, create_time, edit_by, edit_time, edit_flag, clue_id
   </sql>
+  <select id="selectClueRemarkByClueId" parameterType="string" resultMap="BaseResultMap">
+    select cr.id, cr.note_content, u1.name as create_by, cr.create_time, u2.name as edit_by, cr.edit_time, cr.edit_flag, cr.clue_id
+    from tbl_clue_remark cr
+    join tbl_user u1 on u1.id=cr.create_by
+    join tbl_user u2 on u2.id=cr.edit_by
+    where cr.clue_id=#{id}
+  </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     <!--
       WARNING - @mbggenerated

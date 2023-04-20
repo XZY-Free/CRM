@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface ClueMapper {
+    Clue selectClueById(String id);
+    int deleteClueByIds(String[] ids);
     int selectCluesForPageCounts(Map map);
      List<Clue> selectCluesForPage(Map map);
     /**

@@ -84,70 +84,184 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					}
 				}
 			})
-		})
-	function queryClueByConditionForPage(pageNo,pageSize) {
-		var clueName=$("#clue_name").val();
-		var clueOwner=$("#clue_owner").val();
-		var clueIphone=$("#clue_iphone").val();
-		var cluePhone=$("#clue_phone").val();
-		var clueCompany=$("#clue_company").val();
-		var clueState=$("#clue_state").val();
-		var clueSource=$("#clue_source").val();
-		$.ajax({
-			url:"workbench/clue/queryClueForPage.do",
-			data:{
-				fullname:clueName,
-				owner:clueOwner,
-				phone:cluePhone,
-				mphone:clueIphone,
-				company:clueCompany,
-				state:clueState,
-				source:clueSource,
-				pageNo:pageNo,
-				pageSize:pageSize
-			},
-			type:'post',
-			dataType:'json',
-			success:function (data) {
-				var html="";
-				$.each(data.clueList,function (index,obj) {
-					html+="<tr>"+
-						"<td><input type=\"checkbox\" value='"+obj.id+"'/></td>"+
-						"<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='detail.html';\">"+obj.fullname+"</a></td>"+
-						"<td>"+obj.company+"</td>"+
-						"<td>"+obj.mphone+"</td>"+
-						"<td>"+obj.phone+"</td>"+
-						"<td>"+obj.source+"</td>"+
-						"<td>"+obj.owner+"</td>"+
-						"<td>"+obj.state+"</td>"+
-					"</tr>"
-				})
-				$("#clue_tbody").html(html);
-				if (data.totalCounts % pageSize==0){
-					var totalPages=data.totalCounts/pageSize;
-				}else{
-					var totalPages=parseInt(data.totalCounts / pageSize)+1;
+		});
+		$("#updateBtn").click(function () {
+			var checkedObj=$("#clue_tbody input[type='checkbox']:checked");
+			if (checkedObj.size()==0){
+				alert("请选择你要修改的记录!")
+				return;
+			}
+			if (checkedObj.size()>1){
+				alert("每次最多修改一条记录!")
+				return;
+			}
+			var id=checkedObj[0].value;
+			$.ajax({
+				url:"workbench/clue/selectClueById.do",
+				data:{
+					id:id
+				},
+				type:"post",
+				dataType:'json',
+				success:function (data) {
+					$("#edit_id").val(data.id);
+					$("#edit-surname").val(data.fullname)
+					$("#edit-clueOwner").val(data.owner);
+					$("#edit-call").val(data.appellation);
+					$("#edit-company").val(data.company);
+					$("#edit-job").val(data.job);
+					$("#edit-describe").val(data.description)
+					$("#edit-phone").val(data.phone);
+					$("#edit-mphone").val(data.mphone);
+					$("#edit-website").val(data.website);
+					$("#edit-contactSummary").val(data.contactSummary);
+					$("#edit-status").val(data.state);
+					$("#edit-source").val(data.source);
+					$("#edit-nextContactTime").val(data.nextContactTime);
+					$("#edit-address").val(data.address);
+					$("#editClueModal").modal("show");
+
 				}
-				$("#clue_page").bs_pagination({
-					currentPage:pageNo,
-					rowsPerPage: pageSize,
-					maxRowsPerPage: 100,
-					totalPages:totalPages,
-					totalRows: data.totalCounts,
-
-					visiblePageLinks: 5,
-
-					showGoToPage: true,
-					showRowsPerPage: true,
-					showRowsInfo: false,
-					onChangePage:function(event,pageObj) {
-						queryActivityByConditionForPage(pageObj.currentPage,
-								pageObj.rowsPerPage)
+			})
+		});
+		$("#updateClueBtn").click(function () {
+			var  id=$("#edit_id").val();
+			var  fullname=$("#edit-surname").val()
+			var  owner=$("#edit-clueOwner").val();
+			var  appellation=$("#edit-call").val();
+			var  company=$("#edit-company").val();
+			var  job=$("#edit-job").val();
+			var  description=$("#edit-describe").val()
+			var  phone=$("#edit-phone").val();
+			var  mphone=$("#edit-mphone").val();
+			var  website=$("#edit-website").val();
+			var  contactSummary=$("#edit-contactSummary").val();
+			var  state=$("#edit-status").val();
+			var  source=$("#edit-source").val();
+			var  nextContactTime=$("#edit-nextContactTime").val();
+			var  address=$("#edit-address").val();
+			$.ajax({
+				url:"workbench/clue/updateClueById.do",
+				type:"post",
+				data:{
+					id:id,
+					fullname:fullname,
+					owner:owner,
+					appellation:appellation,
+					company:company,
+					job:job,
+					phone:phone,
+					mphone:mphone,
+					website:website,
+					contactSummary:contactSummary,
+					state:state,
+					source:source,
+					nextContactTime:nextContactTime,
+					address:address,
+					description:description
+				},
+				dateType:"json",
+				success:function (data){
+					if (data.code=="200"){
+						$("#editClueModal").modal("hide");
+						queryClueByConditionForPage($("#clue_page").bs_pagination("getOption","currentPage"),$("#clue_page").bs_pagination("getOption","rowsPerPage"));
+						alert("修改成功！");
+					}else{
+						alert("系统忙，请稍后重试。。。");
+					}
+				}
+			})
+		});
+		$("#deleteBtn").click(function () {
+			if ($("#clue_tbody input[type='checkbox']:checked").size()==0){
+				alert("请选择要删除的记录！");
+				return;
+			}
+			if (window.confirm("确认要删除？")){
+				var ids='ids=';
+				$.each($("#clue_tbody input[type='checkbox']:checked"),function (index, obj) {
+					ids+=obj.value+"&";
+				})
+				ids=ids.substring(0,ids.length-1);
+				$.ajax({
+					url:"workbench/clue/deleteByIds.do",
+					data:ids,
+					type:"post",
+					dataType:'json',
+					success:function (data) {
+						if (data.code=="200"){
+							alert("删除成功！");
+							queryClueByConditionForPage(1,$("#clue_page").bs_pagination("getOption","rowsPerPage"));
+						}else{
+							alert("删除失败！")
+						}
 					}
 				})
 			}
-		})
-	}
+		});
+		function queryClueByConditionForPage(pageNo,pageSize) {
+			var clueName=$("#clue_name").val();
+			var clueOwner=$("#clue_owner").val();
+			var clueIphone=$("#clue_iphone").val();
+			var cluePhone=$("#clue_phone").val();
+			var clueCompany=$("#clue_company").val();
+			var clueState=$("#clue_state").val();
+			var clueSource=$("#clue_source").val();
+			$.ajax({
+				url:"workbench/clue/queryClueForPage.do",
+				data:{
+					fullname:clueName,
+					owner:clueOwner,
+					phone:cluePhone,
+					mphone:clueIphone,
+					company:clueCompany,
+					state:clueState,
+					source:clueSource,
+					pageNo:pageNo,
+					pageSize:pageSize
+				},
+				type:'post',
+				dataType:'json',
+				success:function (data) {
+					var html="";
+					$.each(data.clueList,function (index,obj) {
+						html+="<tr>"+
+							"<td><input type=\"checkbox\" value='"+obj.id+"'/></td>"+
+							"<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='workbench/clueDetail/index.do?id="+obj.id+"';\">"+obj.fullname+"</a></td>"+
+							"<td>"+obj.company+"</td>"+
+							"<td>"+obj.mphone+"</td>"+
+							"<td>"+obj.phone+"</td>"+
+							"<td>"+obj.source+"</td>"+
+							"<td>"+obj.owner+"</td>"+
+							"<td>"+obj.state+"</td>"+
+						"</tr>"
+					})
+					$("#clue_tbody").html(html);
+					if (data.totalCounts % pageSize==0){
+						var totalPages=data.totalCounts/pageSize;
+					}else{
+						var totalPages=parseInt(data.totalCounts / pageSize)+1;
+					}
+					$("#clue_page").bs_pagination({
+						currentPage:pageNo,
+						rowsPerPage: pageSize,
+						maxRowsPerPage: 100,
+						totalPages:totalPages,
+						totalRows: data.totalCounts,
+
+						visiblePageLinks: 5,
+
+						showGoToPage: true,
+						showRowsPerPage: true,
+						showRowsInfo: false,
+						onChangePage:function(event,pageObj) {
+							queryActivityByConditionForPage(pageObj.currentPage,
+									pageObj.rowsPerPage)
+						}
+					})
+				}
+			})
+		}
 
 
 });
@@ -305,7 +419,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal" role="form">
-					
+						<input type="hidden" id="edit_id">
 						<div class="form-group">
 							<label for="edit-clueOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
@@ -317,7 +431,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 							</div>
 							<label for="edit-company" class="col-sm-2 control-label">公司<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-company" value="动力节点">
+								<input type="text" class="form-control" id="edit-company" >
 							</div>
 						</div>
 						
@@ -333,36 +447,36 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 							</div>
 							<label for="edit-surname" class="col-sm-2 control-label">姓名<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-surname" value="李四">
+								<input type="text" class="form-control" id="edit-surname" >
 							</div>
 						</div>
 						
 						<div class="form-group">
 							<label for="edit-job" class="col-sm-2 control-label">职位</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-job" value="CTO">
+								<input type="text" class="form-control" id="edit-job" >
 							</div>
 							<label for="edit-email" class="col-sm-2 control-label">邮箱</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-email" value="lisi@bjpowernode.com">
+								<input type="text" class="form-control" id="edit-email">
 							</div>
 						</div>
 						
 						<div class="form-group">
 							<label for="edit-phone" class="col-sm-2 control-label">公司座机</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-phone" value="010-84846003">
+								<input type="text" class="form-control" id="edit-phone" >
 							</div>
 							<label for="edit-website" class="col-sm-2 control-label">公司网站</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-website" value="http://www.bjpowernode.com">
+								<input type="text" class="form-control" id="edit-website">
 							</div>
 						</div>
 						
 						<div class="form-group">
 							<label for="edit-mphone" class="col-sm-2 control-label">手机</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-mphone" value="12345678901">
+								<input type="text" class="form-control" id="edit-mphone" >
 							</div>
 							<label for="edit-status" class="col-sm-2 control-label">线索状态</label>
 							<div class="col-sm-10" style="width: 300px;">
@@ -388,7 +502,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 						<div class="form-group">
 							<label for="edit-describe" class="col-sm-2 control-label">描述</label>
 							<div class="col-sm-10" style="width: 81%;">
-								<textarea class="form-control" rows="3" id="edit-describe">这是一条线索的描述信息</textarea>
+								<textarea class="form-control" rows="3" id="edit-describe"></textarea>
 							</div>
 						</div>
 						
@@ -398,13 +512,13 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 							<div class="form-group">
 								<label for="edit-contactSummary" class="col-sm-2 control-label">联系纪要</label>
 								<div class="col-sm-10" style="width: 81%;">
-									<textarea class="form-control" rows="3" id="edit-contactSummary">这个线索即将被转换</textarea>
+									<textarea class="form-control" rows="3" id="edit-contactSummary"></textarea>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="edit-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
 								<div class="col-sm-10" style="width: 300px;">
-									<input type="text" class="form-control" id="edit-nextContactTime" value="2017-05-01">
+									<input type="text" class="form-control" id="edit-nextContactTime" >
 								</div>
 							</div>
 						</div>
@@ -415,7 +529,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
                             <div class="form-group">
                                 <label for="edit-address" class="col-sm-2 control-label">详细地址</label>
                                 <div class="col-sm-10" style="width: 81%;">
-                                    <textarea class="form-control" rows="1" id="edit-address">北京大兴区大族企业湾</textarea>
+                                    <textarea class="form-control" rows="1" id="edit-address"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -424,7 +538,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">更新</button>
+					<button type="button" class="btn btn-primary" id="updateClueBtn">更新</button>
 				</div>
 			</div>
 		</div>
@@ -518,8 +632,8 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 40px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createClueModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
-				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editClueModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-default" id="updateBtn"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
+				  <button type="button" class="btn btn-danger" id="deleteBtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				
 				
