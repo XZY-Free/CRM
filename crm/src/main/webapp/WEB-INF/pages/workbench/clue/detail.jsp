@@ -18,6 +18,90 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 	var cancelAndSaveBtnDefault = true;
 	
 	$(function(){
+		$("#saveBtn").click(function () {
+			var note_content=$.trim($("#remark").val());
+			if (note_content==""){
+				alert("请输入你要保存的备注！");
+				return;
+			}
+			var id=$("#clue_id").val();
+			$.ajax({
+				url:'workbench/clueRemark/save',
+				data:{
+					clueId:id,
+					noteContent:note_content
+				},
+				type:'post',
+				dataType:'json',
+				success:function (data) {
+					if (data.code=="200"){
+						alert("保存成功！");
+						$("#remark").text("");
+						window.location.href="workbench/clueDetail/index.do?id="+id;
+					}else{
+						alert("系统忙请稍后重试!");
+					}
+				}
+			})
+		});
+		$("#edit-remark").on('click',"a[id='deleteBtn']",function () {
+			var id=$(this).attr("remarkId");
+			var clueId=$("#clue_id").val();
+			$.ajax({
+				url:'workbench/clueRemark/delete',
+				data:{
+					id:id
+				},
+				type:'post',
+				dataType:'json',
+				success:function (data) {
+					if (data.code=="200"){
+						alert("删除成功！");
+						window.location.href="workbench/clueDetail/index.do?id="+clueId;
+					}else{
+						alert("系统忙请稍后重试!");
+					}
+				}
+
+			})
+		});
+		$("#edit-remark").on('click',"a[id='editBtn']",function () {
+			console.log("aaaaa");
+			$("#remarkId").prop("value",$(this).attr("remarkId"));
+			$("#editRemarkModal").modal("show");
+		});
+		$("#updateRemarkBtn").click(function () {
+			var id=$("#remarkId").val();
+			var noteContent=$.trim($("#noteContent").val());
+			var clueId=$("#clue_id").val();
+			$.ajax({
+				url:'workbench/clueRemark/update',
+				data:{
+					clueId:clueId,
+					id:id,
+					noteContent:noteContent
+				},
+				type:'post',
+				dataType:'json',
+				success:function (data) {
+					if (data.code=="200"){
+						alert("保存成功！");
+						$("#noteContent").text("");
+						$("#editRemarkModal").modal("hide");
+						window.location.href="workbench/clueDetail/index.do?id="+clueId;
+					}else{
+						alert("系统忙请稍后重试!");
+					}
+				},
+				beforeSend:function () {
+					if (noteContent==""){
+						alert("请输入要修改的备注内容！");
+						return false;
+					}
+					return true;
+				}
+			})
+		})
 		$("#remark").focus(function(){
 			if(cancelAndSaveBtnDefault){
 				//设置remarkDiv的高度为130px
@@ -57,6 +141,35 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 
 </head>
 <body>
+	<!-- 修改市场活动备注的模态窗口 -->
+	<div class="modal fade" id="editRemarkModal" role="dialog">
+		<%-- 备注的id --%>
+		<input type="hidden" id="remarkId">
+		<div class="modal-dialog" role="document" style="width: 40%;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">修改备注</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<div class="form-group">
+							<label for="noteContent" class="col-sm-2 control-label">内容</label>
+							<div class="col-sm-10" style="width: 81%;">
+								<textarea class="form-control" rows="3" id="noteContent"></textarea>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" id="updateRemarkBtn">更新</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<!-- 关联市场活动的模态窗口 -->
 	<div class="modal fade" id="bundModal" role="dialog">
@@ -138,6 +251,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 	<!-- 详细信息 -->
 	<div style="position: relative; top: -70px;">
 		<div style="position: relative; left: 40px; height: 30px;">
+			<input type="hidden" value="${requestScope.clue.id}" id="clue_id">
 			<div style="width: 300px; color: gray;">名称</div>
 			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${requestScope.clue.fullname}</b></div>
 			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">所有者</div>
@@ -233,10 +347,10 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				<div style="position: relative; top: -40px; left: 40px;" >
 					<h5>${clueRemark.noteContent}</h5>
 					<font color="gray">线索</font> <font color="gray">-</font> <b>${requestScope.clue.fullname}-${requestScope.clue.company}</b> <small style="color: gray;"> ${clueRemark.editFlag=="1"?clueRemark.editTime:clueRemark.createTime}由${clueRemark.editFlag=="1"?clueRemark.editBy:clueRemark.createBy}</small>
-					<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
-						<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
+					<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;" id="edit-remark">
+						<a remarkId="${clueRemark.id}" class="myHref" id="editBtn"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
 						&nbsp;&nbsp;&nbsp;&nbsp;
-						<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
+						<a remarkId="${clueRemark.id}" class="myHref" id="deleteBtn"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
 					</div>
 				</div>
 			</div>
@@ -248,7 +362,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				<textarea id="remark" class="form-control" style="width: 850px; resize : none;" rows="2"  placeholder="添加备注..."></textarea>
 				<p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
 					<button id="cancelBtn" type="button" class="btn btn-default">取消</button>
-					<button type="button" class="btn btn-primary">保存</button>
+					<button type="button" class="btn btn-primary" id="saveBtn">保存</button>
 				</p>
 			</form>
 		</div>

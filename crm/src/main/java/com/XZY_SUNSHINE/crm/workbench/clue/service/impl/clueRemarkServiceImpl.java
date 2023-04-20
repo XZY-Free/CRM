@@ -12,6 +12,22 @@ import java.util.List;
 public class clueRemarkServiceImpl implements clueRemarkService {
     @Autowired
     private ClueRemarkMapper clueRemarkMapper;
+
+    @Override
+    public int updateClueRemarkById(ClueRemark clueRemark) {
+        return clueRemarkMapper.updateByPrimaryKeySelective(clueRemark);
+    }
+
+    @Override
+    public int deleteClueRemarkById(String id) {
+        return clueRemarkMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public int saveClueRemark(ClueRemark clueRemark) {
+        return clueRemarkMapper.insert(clueRemark);
+    }
+
     @Override
     public List<ClueRemark> queryClueRemarkByClueId(String id) {
         return clueRemarkMapper.selectClueRemarkByClueId(id);

@@ -154,4 +154,64 @@ public class clueController {
         request.setAttribute("clue",clue);
         return "workbench/clue/detail";
     }
+
+    @PostMapping("/workbench/clueRemark/save")
+    @ResponseBody
+    public Object saveClueRemark(ClueRemark clueRemark,HttpSession session){
+        User user = (User) session.getAttribute(constants.SESSION_USER);
+        clueRemark.setId(uuid.getUUID());
+        clueRemark.setCreateBy(user.getId());
+        clueRemark.setCreateTime(DateFormat.dateFormatTime(new Date()));
+        ResultObject resultObject = new ResultObject();
+        try{
+            int i = clueRemarkService.saveClueRemark(clueRemark);
+            if (i>0){
+                resultObject.setCode(constants.SUCCESS_CODE);
+            }else{
+                resultObject.setCode(constants.FAIL_CODE);
+            }
+        }catch (Exception e ){
+            e.printStackTrace();
+        }
+        return resultObject;
+    }
+
+    @PostMapping("/workbench/clueRemark/delete")
+    @ResponseBody
+    public Object deleteClueRemarkById(String id){
+        ResultObject resultObject = new ResultObject();
+        try{
+            int i = clueRemarkService.deleteClueRemarkById(id);
+            if (i>0){
+                resultObject.setCode(constants.SUCCESS_CODE);
+            }else{
+                resultObject.setCode(constants.FAIL_CODE);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return resultObject;
+    }
+
+    @PostMapping("/workbench/clueRemark/update")
+    @ResponseBody
+    public Object updateClueRemark(ClueRemark clueRemark,HttpSession session){
+        User user = (User) session.getAttribute(constants.SESSION_USER);
+        clueRemark.setEditBy(user.getId());
+        clueRemark.setEditTime(DateFormat.dateFormatTime(new Date()));
+        clueRemark.setEditFlag("1");
+        ResultObject resultObject = new ResultObject();
+        try{
+            int i = clueRemarkService.updateClueRemarkById(clueRemark);
+            if (i>0){
+                resultObject.setCode(constants.SUCCESS_CODE);
+            }else{
+                resultObject.setCode(constants.FAIL_CODE);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return resultObject;
+
+    }
 }
