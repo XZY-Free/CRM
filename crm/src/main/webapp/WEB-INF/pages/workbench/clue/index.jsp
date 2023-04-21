@@ -199,6 +199,17 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				})
 			}
 		});
+		$("#selectAll_box").click(function () {
+			$("#clue_tbody input[type='checkbox']").prop("checked",this.checked)
+		})
+
+		$("#clue_tbody").on("click","input[type='checkbox']",function () {
+			if ($("#clue_tbody input[type='checkbox']").size()==$("#clue_tbody input[type='checkbox']:checked").size()){
+				$("#selectAll_box").prop("checked",true);
+			}else{
+				$("#selectAll_box").prop("checked",false);
+			}
+		})
 		function queryClueByConditionForPage(pageNo,pageSize) {
 			var clueName=$("#clue_name").val();
 			var clueOwner=$("#clue_owner").val();
@@ -642,7 +653,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				<table class="table table-hover">
 					<thead>
 						<tr style="color: #B3B3B3;">
-							<td><input type="checkbox" /></td>
+							<td><input type="checkbox"  id="selectAll_box"/></td>
 							<td>名称</td>
 							<td>公司</td>
 							<td>公司座机</td>

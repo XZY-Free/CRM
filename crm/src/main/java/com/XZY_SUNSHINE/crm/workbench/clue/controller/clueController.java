@@ -9,8 +9,10 @@ import com.XZY_SUNSHINE.crm.settings.service.UserService;
 import com.XZY_SUNSHINE.crm.workbench.activity.pojo.Activity;
 import com.XZY_SUNSHINE.crm.workbench.activity.service.ActivityService;
 import com.XZY_SUNSHINE.crm.workbench.clue.pojo.Clue;
+import com.XZY_SUNSHINE.crm.workbench.clue.pojo.ClueActivityRelation;
 import com.XZY_SUNSHINE.crm.workbench.clue.pojo.ClueRemark;
 import com.XZY_SUNSHINE.crm.workbench.clue.pojo.DicValue;
+import com.XZY_SUNSHINE.crm.workbench.clue.service.clueActivityRelationService;
 import com.XZY_SUNSHINE.crm.workbench.clue.service.clueRemarkService;
 import com.XZY_SUNSHINE.crm.workbench.clue.service.clueService;
 import com.XZY_SUNSHINE.crm.workbench.clue.service.dicValueService;
@@ -18,14 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class clueController {
@@ -40,6 +40,8 @@ public class clueController {
     private clueRemarkService clueRemarkService;
     @Autowired
     private ActivityService activityService;
+    @Autowired
+    private clueActivityRelationService clueActivityRelationService;
     @GetMapping("/workbench/clue/index.do")
     public String index(HttpServletRequest request){
         List<User> userList = userService.queryAllUsers();
@@ -213,5 +215,57 @@ public class clueController {
         }
         return resultObject;
 
+    }
+
+
+    @PostMapping("/workbench/clueDetail/selectActivityLikeName.do")
+    @ResponseBody
+    public Object selectActivityLikeName(String name,String id){
+        return activityService.queryActivityLikeName(name,id);
+    }
+
+    @PostMapping("/workbench/clueActivityRelation/save")
+    @ResponseBody
+    public Object saveClueActivityRelation(String clueId,String[] activityIds){
+        List<ClueActivityRelation> clueActivityRelationList = new ArrayList<>();
+        for (int i = 0; i < activityIds.length; i++) {
+            ClueActivityRelation clueActivityRelation = new ClueActivityRelation();
+            clueActivityRelation.setId(uuid.getUUID());
+            clueActivityRelation.setActivityId(activityIds[i]);
+            clueActivityRelation.setClueId(clueId);
+            clueActivityRelationList.add(clueActivityRelation);
+        }
+        ResultObject resultObject = new ResultObject();
+        try{
+            int i = clueActivityRelationService.saveRelationByList(clueActivityRelationList);
+            if (i>0){
+                resultObject.setCode(constants.SUCCESS_CODE);
+            }else{
+                resultObject.setCode(constants.FAIL_CODE);
+            }
+        }catch (Exception e ){
+            e.printStackTrace();
+        }
+
+        return resultObject;
+
+    }
+
+
+    @PostMapping("/workbench/clueDetail/cancelBind.do")
+    @ResponseBody
+    public Object cancelBind(String activityId,String clueId){
+        ResultObject resultObject = new ResultObject();
+        try{
+            int i = clueActivityRelationService.deleteClueActivityRelationById(activityId, clueId);
+            if (i>0){
+                resultObject.setCode(constants.SUCCESS_CODE);
+            }else{
+                resultObject.setCode(constants.FAIL_CODE);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return resultObject;
     }
 }
