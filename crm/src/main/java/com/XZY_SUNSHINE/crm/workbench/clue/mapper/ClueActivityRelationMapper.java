@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 @Mapper
 public interface ClueActivityRelationMapper {
+    List<ClueActivityRelation> selectByClueId(String clueId);
+    int deleteClueActivityRelationByClueId(String clueId);
     int deleteClueActivityRelation(@Param("activityId") String activityId,@Param("clueId") String clueId);
     int insertRelationByList(List<ClueActivityRelation> clueActivityRelationList);
     /**

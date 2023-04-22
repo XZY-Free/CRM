@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ActivityService {
+    List<Activity> queryActivityLikeNameForConvert(String name,String id);
     List<Activity> queryActivityLikeName(String name,String id);
     List<Activity> queryActivityByClueId(String id);
     int saveActivityByList(List<Activity> activities);

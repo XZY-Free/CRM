@@ -2,12 +2,15 @@ package com.XZY_SUNSHINE.crm.workbench.activity.mapper;
 
 import com.XZY_SUNSHINE.crm.workbench.activity.pojo.Activity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
 
 @Mapper
 public interface ActivityMapper {
+    List<Activity> selectActivityByNameForConvert(@Param("name") String name,@Param("id")String id);
+    List<Activity> selectActivityByLikeName(@Param("name") String name,@Param("id") String id);
     List<Activity> selectActivityByClueId(String id);
     int insertActivityByList(List<Activity> activities);
     List<Activity> selectAllActivitiesByIds(String[] ids);

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface clueService {
+    void toConvert(Map map);
     Clue queryClueById(String id);
     int deleteClueByIds(String[] ids);
     int updateClue(Clue clue);

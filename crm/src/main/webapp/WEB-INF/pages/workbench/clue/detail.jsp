@@ -65,8 +65,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 
 			})
 		});
-		$("#edit-remark").on('click',"a[id='editBtn']",function () {
-			console.log("aaaaa");
+		$("#edit-remark").on('click',"a[id='editBtn']",function (){
 			$("#remarkId").prop("value",$(this).attr("remarkId"));
 			$("#editRemarkModal").modal("show");
 		});
@@ -177,6 +176,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				$("#selectAll_box").prop("checked",false);
 			}
 		});
+
 		$("#bindBtn").click(function () {
 			var checkObj=$("#activityListTby input[type='checkbox']:checked");
 			if (checkObj.size()==0){
@@ -231,6 +231,10 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				});
 			}
 
+		});
+		$("#convertBtn").click(function () {
+			var clueId=$("#clue_id").val();
+			window.location.href="workbench/convert/index.do?id="+clueId;
 		})
 	});
 	
@@ -323,7 +327,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			<h3>${requestScope.clue.fullname} <small>${requestScope.clue.company}</small></h3>
 		</div>
 		<div style="position: relative; height: 50px; width: 500px;  top: -72px; left: 700px;">
-			<button type="button" class="btn btn-default" onclick="window.location.href='convert.html';"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
+			<button type="button" class="btn btn-default" id="convertBtn"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
 			
 		</div>
 	</div>

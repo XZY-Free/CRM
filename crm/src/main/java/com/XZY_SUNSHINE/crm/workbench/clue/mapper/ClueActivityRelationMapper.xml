@@ -19,6 +19,16 @@
     -->
     id, clue_id, activity_id
   </sql>
+  <select id="selectByClueId" parameterType="string" resultMap="BaseResultMap">
+    select id, clue_id, activity_id
+    from tbl_clue_activity_relation
+    where clue_id=#{clueId}
+  </select>
+  <delete id="deleteClueActivityRelationByClueId" parameterType="string">
+    delete
+    from tbl_clue_activity_relation
+    where clue_id=#{clueId}
+  </delete>
   <delete id="deleteClueActivityRelation" parameterType="string">
     delete
     from tbl_clue_activity_relation

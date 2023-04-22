@@ -15,6 +15,11 @@ public class ActivityServiceImpl implements ActivityService {
     private ActivityMapper activityMapper;
 
     @Override
+    public List<Activity> queryActivityLikeNameForConvert(String name, String id) {
+        return activityMapper.selectActivityByNameForConvert(name,id);
+    }
+
+    @Override
     public List<Activity> queryActivityLikeName(String name, String id) {
         return activityMapper.selectActivityByLikeName(name,id);
     }

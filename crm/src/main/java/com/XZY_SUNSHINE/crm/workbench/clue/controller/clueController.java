@@ -268,4 +268,47 @@ public class clueController {
         }
         return resultObject;
     }
+
+
+    @GetMapping("/workbench/convert/index.do")
+    public String convertIndex(String id,HttpServletRequest request){
+        Clue clue = clueService.queryClueById(id);
+        List<DicValue> stageList = dicValueService.queryDicValueByTypeCode("stage");
+        request.setAttribute("clue",clue);
+        request.setAttribute("stageList",stageList);
+        return "workbench/clue/convert";
+    }
+
+    @PostMapping("/workbench/convert/selectActivity")
+    @ResponseBody
+    public List<Activity> selectActivity(String name,String id){
+        return activityService.queryActivityLikeNameForConvert(name,id);
+    }
+
+    @PostMapping("/workbench/convert/toConvert")
+    @ResponseBody
+    public Object toConvert(String clueId,String isCreate,String money,
+                            String tradeName, String expectedTime,
+                            String stage, String activityId,HttpSession session){
+        ResultObject resultObject = new ResultObject();
+        User user = (User) session.getAttribute(constants.SESSION_USER);
+        Map<String, Object> map = new HashMap<>();
+        map.put("clueId",clueId);
+        map.put("isCreate",isCreate);
+        map.put("money",money);
+        map.put("tradeName",tradeName);
+        map.put("expectedTime",expectedTime);
+        map.put("stage",stage);
+        map.put("activityId",activityId);
+        map.put(constants.SESSION_USER,user);
+        try{
+            clueService.toConvert(map);
+            resultObject.setCode(constants.SUCCESS_CODE);
+        }catch (Exception e){
+            e.printStackTrace();
+            resultObject.setCode(constants.FAIL_CODE);
+        }
+        return resultObject;
+
+    }
 }
