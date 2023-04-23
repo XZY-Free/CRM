@@ -24,6 +24,14 @@
     -->
     id, note_content, create_by, create_time, edit_by, edit_time, edit_flag, tran_id
   </sql>
+  <select id="selectTranRemarkForDetailByTranId" parameterType="string" resultMap="BaseResultMap">
+    select tr.id, tr.note_content, u1.name as create_by, tr.create_time, u2.name as edit_by, tr.edit_time, tr.edit_flag, t.name as tran_id
+    from tbl_tran_remark tr
+    join tbl_user u1 on u1.id=tr.create_by
+    join tbl_user u2 on u2.id=tr.edit_by
+    join tbl_tran t on t.id=tr.tran_id
+    where tr.tran_id=#{id}
+  </select>
   <insert id="insertByList" parameterType="list" >
     insert into tbl_tran_remark (id, note_content, create_by, create_time, edit_by, edit_time, edit_flag, tran_id)
     values

@@ -36,6 +36,21 @@
     contacts_id, create_by, create_time, edit_by, edit_time, description, contact_summary, 
     next_contact_time
   </sql>
+  <select id="selectTranForDetailById" parameterType="string" resultMap="BaseResultMap">
+    select t.id, u.name as owner, t.money, t.name, t.expected_date, c.name as customer_id, d1.value as stage, d2.value as type, d3.value as source, a.name as activity_id,
+             co.fullname as contacts_id, u1.name as create_by, t.create_time,  t.description, t.contact_summary,t.edit_by, t.edit_time,
+            t.next_contact_time
+    from tbl_tran t
+    join tbl_user u on u.id=t.owner
+    join tbl_customer c on c.id=t.customer_id
+    join tbl_dic_value d1 on d1.id=t.stage
+    join tbl_dic_value d2 on d2.id=t.type
+    join tbl_dic_value d3 on d3.id=t.source
+    join tbl_activity a on a.id=t.activity_id
+    join tbl_contacts co on co.id=t.contacts_id
+    join tbl_user u1 on u1.id=t.create_by
+    where t.id=#{id}
+  </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     <!--
       WARNING - @mbggenerated

@@ -19,6 +19,12 @@ public class TranServiceImpl implements TranService {
     private CustomerMapper customerMapper;
     @Autowired
     private TranMapper tranMapper;
+
+    @Override
+    public Tran queryTranForDetailById(String id) {
+        return tranMapper.selectTranForDetailById(id);
+    }
+
     @Override
     public void createTran(Map map) {
         User user = (User) map.get(constants.SESSION_USER);
