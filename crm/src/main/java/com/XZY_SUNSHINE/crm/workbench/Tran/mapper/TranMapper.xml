@@ -36,6 +36,12 @@
     contacts_id, create_by, create_time, edit_by, edit_time, description, contact_summary, 
     next_contact_time
   </sql>
+  <select id="selectFunnelVOList" resultType="com.XZY_SUNSHINE.crm.workbench.Tran.pojo.FunnelVO">
+    select count(*) as value,dv.value as name
+    from tbl_tran t
+    join tbl_dic_value dv on dv.id=t.stage
+    group by t.stage
+  </select>
   <select id="selectTranForDetailById" parameterType="string" resultMap="BaseResultMap">
     select t.id, u.name as owner, t.money, t.name, t.expected_date, c.name as customer_id, d1.value as stage, d2.value as type, d3.value as source, a.name as activity_id,
              co.fullname as contacts_id, u1.name as create_by, t.create_time,  t.description, t.contact_summary,t.edit_by, t.edit_time,

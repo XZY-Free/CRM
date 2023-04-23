@@ -8,10 +8,12 @@ import com.XZY_SUNSHINE.crm.workbench.Customer.mapper.CustomerMapper;
 import com.XZY_SUNSHINE.crm.workbench.Customer.pojo.Customer;
 import com.XZY_SUNSHINE.crm.workbench.Tran.Service.TranService;
 import com.XZY_SUNSHINE.crm.workbench.Tran.mapper.TranMapper;
+import com.XZY_SUNSHINE.crm.workbench.Tran.pojo.FunnelVO;
 import com.XZY_SUNSHINE.crm.workbench.Tran.pojo.Tran;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 @Service
 public class TranServiceImpl implements TranService {
@@ -19,6 +21,11 @@ public class TranServiceImpl implements TranService {
     private CustomerMapper customerMapper;
     @Autowired
     private TranMapper tranMapper;
+
+    @Override
+    public List<FunnelVO> queryFunnelVOList() {
+        return tranMapper.selectFunnelVOList();
+    }
 
     @Override
     public Tran queryTranForDetailById(String id) {
