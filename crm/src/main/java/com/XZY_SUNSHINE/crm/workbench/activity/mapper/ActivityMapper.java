@@ -9,6 +9,7 @@ import java.util.Map;
 
 @Mapper
 public interface ActivityMapper {
+    List<Activity> selectActivityByName(String name);
     List<Activity> selectActivityByNameForConvert(@Param("name") String name,@Param("id")String id);
     List<Activity> selectActivityByLikeName(@Param("name") String name,@Param("id") String id);
     List<Activity> selectActivityByClueId(String id);

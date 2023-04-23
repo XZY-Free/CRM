@@ -30,6 +30,16 @@
     id, owner, name, website, phone, create_by, create_time, edit_by, edit_time, contact_summary, 
     next_contact_time, description, address
   </sql>
+  <select id="selectCustomerByName" parameterType="string" resultType="string">
+    select name
+    from tbl_customer
+    where name like '%' #{name} '%'
+  </select>
+  <select id="selectCustomer" parameterType="string" resultType="string">
+    select id
+    from tbl_customer
+    where name=#{name}
+  </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     <!--
       WARNING - @mbggenerated

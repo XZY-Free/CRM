@@ -21,6 +21,8 @@ http://www.springframework.org/schema/aop/spring-aop.xsd">
     <context:component-scan base-package="com.XZY_SUNSHINE.crm.settings.service" />
     <context:component-scan base-package="com.XZY_SUNSHINE.crm.workbench.activity.service"/>
     <context:component-scan base-package="com.XZY_SUNSHINE.crm.workbench.clue.service"/>
+    <context:component-scan base-package="com.XZY_SUNSHINE.crm.workbench.Customer.Service"/>
+    <context:component-scan base-package="com.XZY_SUNSHINE.crm.workbench.Tran.Service"/>
     <!-- 导入数据相关配置 -->
     <import resource="applicationContext-datasource.xml" />
 </beans>

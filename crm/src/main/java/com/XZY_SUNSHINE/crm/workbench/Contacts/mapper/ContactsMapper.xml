@@ -35,6 +35,11 @@
     create_time, edit_by, edit_time, description, contact_summary, next_contact_time, 
     address
   </sql>
+  <select id="selectContactsByName" parameterType="string" resultMap="BaseResultMap">
+    select id,fullname,mphone,email
+    from tbl_contacts
+    where  fullname like '%' #{name} '%'
+  </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     <!--
       WARNING - @mbggenerated

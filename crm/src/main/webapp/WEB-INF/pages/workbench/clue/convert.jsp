@@ -92,7 +92,8 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				dataType: 'json',
 				success:function (data) {
 					if (data.code=="200"){
-						alert("转换成功！")
+						alert("转换成功！");
+						window.location.href="workbench/clue/index.do";
 					}else{
 						alert("系统忙，请稍后重试！")
 					}

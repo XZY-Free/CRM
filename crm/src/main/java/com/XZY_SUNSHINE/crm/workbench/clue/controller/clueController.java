@@ -284,6 +284,11 @@ public class clueController {
     public List<Activity> selectActivity(String name,String id){
         return activityService.queryActivityLikeNameForConvert(name,id);
     }
+    @PostMapping("/workbench/convert/selectActivityByName")
+    @ResponseBody
+    public List<Activity> selectActivityByName(String name){
+        return activityService.queryActivityByName(name);
+    }
 
     @PostMapping("/workbench/convert/toConvert")
     @ResponseBody
